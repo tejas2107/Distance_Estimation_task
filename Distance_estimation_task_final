@@ -1,0 +1,60 @@
+import cv2
+import numpy as np
+import math
+#import libraries
+
+##Step 1
+##Image calibration using Matlab,Set the image parameters and resize the images
+
+img=cv2.imread(path)
+width = 
+height =
+dim = (width, height)
+ 
+# resize image
+resized = cv2.resize(img, dim, interpolation = cv2.INTER_AREA)
+status = cv2.imwrite(dir_path,resized)
+
+##Step 2
+##Object estimation
+def magnitude(vector): 
+    return math.sqrt(sum(pow(element, 2) for element in vector))
+
+K=np.array([1494.75555178410,0,0,0,1495.23204052455,0,754.490118848113,754.949988347307,1]).reshape(3,3)
+K=K.transpose()
+#Calibration matrix
+
+(distance_z,distance_y,distance_x)=(0,0,0)
+#Distance from camera
+x,y,w,h=cv2.selectROI("select target",frame)
+cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255),2)
+#Bounding box selection
+res=np.array([1,0,distance_x,0,-1,distance_y,0,0,distance_z]).reshape(3,3)
+#Rotation/Translation matrix
+
+arr1=np.linalg.inv(H)@(np.array([x,y,1]).transpose())
+arr2=np.linalg.inv(H)@(np.array([x+w,y,1]).transpose())
+arr3=np.linalg.inv(H)@(np.array([x,y+h,1]).transpose())
+arr4=np.linalg.inv(H)@(np.array([x+w,y+h,1]).transpose())
+
+
+X_dim=arr1/arr1[2]-arr2/arr[2]
+Y_dim=arr1/arr[2]-arr3/arr[2]
+X=abs(X_dim[0])
+Y=abs(Y_dim[1])
+##Step 3
+##Distance Estimation
+img_next=cv2.imread(path_1)
+x,y,w,h=cv2.selectROI("select target",img_next)
+cv2.rectangle(frame,(x,y),(x+w,y+h),(0,0,255),2)
+#Bounding box selection
+H, status = cv2.findHomography(np.array([(0,0),(X,0),(0,-Y),(X,-Y)]),np.array([(x,y),(x+w,y),(x,y+h),(x+w,y+h)]))
+res=np.linalg.inv(K)@H
+res=res/magnitude(res[:,1])
+#distance=res[2,2]
+#distance=magnitude(res_row)/(magnitude(res[:,1]))
+cv2.putText(img_next,str(distance), (x, y-60), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
+cv2.imshow('Frame',img_next)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
